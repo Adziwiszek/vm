@@ -24,6 +24,11 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
 
+# Run executable
+run:
+	@make
+	@./$(BIN)
+
 # Clean the build
 clean:
 	rm -rf $(BIN) $(OBJ_DIR)
