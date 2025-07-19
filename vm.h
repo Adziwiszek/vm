@@ -13,19 +13,20 @@ typedef enum {
 } InterpretResult;
 
 typedef struct {
-  Chunk* chunk;
-  uint8_t* ip;
-  Value stack[STACK_MAX];
-  Value* stackTop;
+  Chunk *chunk;
+  uint8_t *ip;
+  ValueArray stack;
+  Value *stackTop;
 } VM;
 
 void initVM();
 void freeVM();
 void push(Value value);
 Value pop();
-InterpretResult interpret(Chunk* chunk);
+InterpretResult interpret(Chunk *chunk);
 
 static InterpretResult run();
 static void resetStack();
+static void upatedStackPointer();
 
 #endif
