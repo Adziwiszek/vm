@@ -13,12 +13,12 @@ void debugStack() {
 
 void initVM() {
   initValueArray(&vm.stack);
-  resetStack();
+  upatedStackPointer();
 }
 
 void freeVM() {
-  resetStack();
   freeValueArray(&vm.stack);
+  upatedStackPointer();
 }
 
 void push(Value value) {
@@ -44,8 +44,7 @@ static InterpretResult run() {
   for (;;) {
 #ifdef DEBUG_TRACE_EXECUTION
     printf("          ");
-    for (Value *slot = vm.stack.values;
-         slot < vm.stackTop && vm.stack.count > 0; slot++) {
+    for (Value *slot = vm.stack.values; slot < vm.stackTop; slot++) {
       printf("[ ");
       printValue(*slot);
       printf(" ]");
@@ -58,6 +57,11 @@ static InterpretResult run() {
     double b = pop();                                                          \
     double a = pop();                                                          \
     push(a op b);                                                              \
+  } while (false)
+#define NEGATE_IN_PLACE()                                                      \
+  do {                                                                         \
+    vm.stack.values[vm.stack.count - 1] =                                      \
+        -vm.stack.values[vm.stack.count - 1];                                  \
   } while (false)
 
     uint8_t instruction;
@@ -72,7 +76,8 @@ static InterpretResult run() {
       return INTERPRET_OK;
       break;
     case OP_NEGATE:
-      push(-pop());
+      // push(-pop());
+      NEGATE_IN_PLACE();
       break;
     case OP_ADD:
       BINARY_OP(+);
@@ -93,7 +98,6 @@ static InterpretResult run() {
 #undef BINARY_OP
 }
 
-static void resetStack() { vm.stackTop = &vm.stack.values[vm.stack.count + 1]; }
 static void upatedStackPointer() {
   vm.stackTop = &vm.stack.values[vm.stack.count];
 }

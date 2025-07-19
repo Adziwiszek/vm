@@ -26,7 +26,6 @@ Value pop();
 InterpretResult interpret(Chunk *chunk);
 
 static InterpretResult run();
-static void resetStack();
 static void upatedStackPointer();
 
 #endif
