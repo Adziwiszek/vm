@@ -1,7 +1,9 @@
+# build files
 *.o
 *.d
 
 obj/*
+build/*
 
 # executable
 vm

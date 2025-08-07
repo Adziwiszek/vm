@@ -1,11 +1,9 @@
-# Compiler and flags
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c99 -g -fsanitize=address
-OBJ_DIR = obj
+OBJ_DIR = build
 SRC_DIR = .
 BIN = vm
 
-# Find all source files
 SRCS = $(wildcard $(SRC_DIR)/*.c)
 OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 

@@ -32,10 +32,9 @@ Value pop() {
   return *vm.stackTop;
 }
 
-InterpretResult interpret(Chunk *chunk) {
-  vm.chunk = chunk;
-  vm.ip = vm.chunk->code;
-  return run();
+InterpretResult interpret(const char* source) {
+    compile(source);
+    return INTERPRET_OK;
 }
 
 static InterpretResult run() {
@@ -58,10 +57,10 @@ static InterpretResult run() {
     double a = pop();                                                          \
     push(a op b);                                                              \
   } while (false)
-#define NEGATE_IN_PLACE()                                                      \
+#define UNARY_OP(op)                                                      \
   do {                                                                         \
     vm.stack.values[vm.stack.count - 1] =                                      \
-        -vm.stack.values[vm.stack.count - 1];                                  \
+        op vm.stack.values[vm.stack.count - 1];                                  \
   } while (false)
 
     uint8_t instruction;
@@ -76,8 +75,7 @@ static InterpretResult run() {
       return INTERPRET_OK;
       break;
     case OP_NEGATE:
-      // push(-pop());
-      NEGATE_IN_PLACE();
+      UNARY_OP(-);
       break;
     case OP_ADD:
       BINARY_OP(+);
