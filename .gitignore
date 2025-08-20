@@ -7,3 +7,6 @@ build/*
 
 # executable
 vm
+
+*.clox
+

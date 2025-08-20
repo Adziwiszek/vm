@@ -25,7 +25,7 @@ void push(Value value);
 Value pop();
 InterpretResult interpret(const char* source);
 
-static InterpretResult run();
 static void upatedStackPointer();
+static InterpretResult run();
 
 #endif
