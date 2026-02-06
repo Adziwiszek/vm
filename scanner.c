@@ -29,7 +29,7 @@ static bool isDigit(char c) {
 
 static bool isAlpha(char c) {
     return (c >= 'A' && c <= 'Z') ||
-        (c >= 'a' && c <= 'a') ||
+        (c >= 'a' && c <= 'z') ||
         c == '_';
 }
 
@@ -206,6 +206,7 @@ Token scanToken() {
                     match('=') ? TOKEN_GREATER_EQUAL : TOKEN_GREATER);
         case '"': return makeString();
     }
-
+    printf("%d\n", isAlpha('n'));
+    printf("c = %c\n", c);
     return errorToken("Unexpected  character.");
 }
