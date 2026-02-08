@@ -3,6 +3,7 @@
 
 #include "chunk.h"
 #include "value.h"
+#include "object.h"
 
 #define STACK_MAX 256
 
@@ -17,7 +18,10 @@ typedef struct {
   uint8_t *ip;
   ValueArray stack;
   Value *stackTop;
+  Obj* objects;
 } VM;
+
+extern VM vm;
 
 void initVM();
 void freeVM();

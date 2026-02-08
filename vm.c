@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 
 #include "vm.h"
 #include "chunk.h"
@@ -7,6 +8,8 @@
 #include "debug.h"
 #include "value.h"
 #include "compiler.h"
+#include "object.h"
+#include "memory.h"
 
 VM vm;
 
@@ -37,12 +40,13 @@ static void runtimeError(const char* format, ...) {
 
 void initVM() {
   initValueArray(&vm.stack);
-  upatedStackPointer();
+  resetStack();
+  vm.objects = NULL;
 }
 
 void freeVM() {
   freeValueArray(&vm.stack);
-  upatedStackPointer();
+  freeObjects();
 }
 
 void push(Value value) {
@@ -62,6 +66,20 @@ static Value peek(int distance) {
 
 static bool isFalsey(Value value) {
   return IS_NIL(value) || (IS_BOOL(value) && !AS_BOOL(value));
+}
+
+static void concatenate() {
+  ObjString* b = AS_STRING(pop());
+  ObjString* a = AS_STRING(pop());
+
+  int length = a->length + b->length;
+  char* str = ALLOCATE(char, length + 1);
+  memcpy(str, a->str, a->length);
+  memcpy(str + a->length, b->str, b->length);
+  str[length] = '\0';
+
+  ObjString* result = takeString(str, length);
+  push(OBJ_VAL(result));
 }
 
 InterpretResult interpret(const char* source) {
@@ -137,7 +155,17 @@ static InterpretResult run() {
         push(BOOL_VAL(isFalsey(pop())));
         break;
       case OP_ADD:
-        BINARY_OP(NUMBER_VAL, +);
+        if(IS_STRING(peek(0)) && IS_STRING(peek(1))) {
+          concatenate();
+        } else if(IS_NUMBER(peek(0)) && IS_NUMBER(peek(0))) {
+          double b = AS_NUMBER(pop());
+          double a = AS_NUMBER(pop());
+          push(NUMBER_VAL(a + b));
+        } else {
+          runtimeError(
+            "Operands must be either two numbers or two strings.");
+          return INTERPRET_RUNTIME_ERROR;
+        }
         break;
       case OP_SUBTRACT:
         BINARY_OP(NUMBER_VAL, -);
