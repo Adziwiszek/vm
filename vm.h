@@ -19,6 +19,7 @@ typedef struct {
   uint8_t *ip;
   ValueArray stack;
   Value *stackTop;
+  Table globals;
   Table strings;
   Obj* objects;
 } VM;
